@@ -2,16 +2,17 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 import {
     ChevronDown,
     LayoutDashboard,
-    Package,
-    ShoppingCart,
     UserCogIcon,
 } from "lucide-react";
 
-import { useState } from "react";
+type Props = {
+    collapsed: boolean
+}
 
 const menus = [
     {
@@ -32,15 +33,19 @@ const menus = [
     },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({
+    collapsed,
+}: Props) {
 
     const pathname = usePathname();
 
     const [openMenus, setOpenMenus] = useState<string[]>([
-        "Products",
+        "ทรัพยากรบุคคล",
     ]);
 
     const toggleMenu = (title: string) => {
+
+        if (collapsed) return;
 
         setOpenMenus((prev) =>
             prev.includes(title)
@@ -52,27 +57,57 @@ export default function Sidebar() {
 
     return (
         <aside
-            className="
+            className={`
                 h-[calc(100vh-64px)]
-                w-72
+                ${collapsed ? "w-20" : "w-72"}
                 overflow-y-auto
                 border-r
                 bg-blue-950
                 px-4
                 py-6
-            "
+                transition-all
+                duration-300
+            `}
         >
 
             {/* LOGO */}
-            <div className="mb-10">
+            <div
+                className={`
+                    mb-10
+                    flex
+                    items-center
+                    ${collapsed ? "justify-center" : ""}
+                `}
+            >
 
-                <h1 className="text-2xl font-black tracking-wide text-white">
-                    ERP SYSTEM
-                </h1>
+                {!collapsed ? (
+                    <div>
+                        <h1 className="text-2xl font-black tracking-wide text-white">
+                            ERP SYSTEM
+                        </h1>
 
-                <p className="text-sm text-blue-200">
-                    Management Platform
-                </p>
+                        <p className="text-sm text-blue-200">
+                            Management Platform
+                        </p>
+                    </div>
+                ) : (
+                    <div
+                        className="
+                            flex
+                            h-12
+                            w-12
+                            items-center
+                            justify-center
+                            rounded-2xl
+                            bg-white
+                            text-lg
+                            font-black
+                            text-blue-950
+                        "
+                    >
+                        CS
+                    </div>
+                )}
 
             </div>
 
@@ -93,12 +128,23 @@ export default function Sidebar() {
 
                     // NORMAL MENU
                     if (!menu.children) {
+
                         return (
                             <Link
                                 key={menu.title}
                                 href={menu.href!}
                                 className={`
-                                    flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition-all
+                                    flex items-center
+                                    ${collapsed
+                                        ? "justify-center"
+                                        : "gap-3"
+                                    }
+                                    rounded-2xl
+                                    px-4
+                                    py-3
+                                    text-sm
+                                    font-medium
+                                    transition-all
 
                                     ${isActive
                                         ? "bg-white text-blue-950 shadow-lg"
@@ -109,9 +155,11 @@ export default function Sidebar() {
 
                                 <Icon size={18} />
 
-                                <span>
-                                    {menu.title}
-                                </span>
+                                {!collapsed && (
+                                    <span>
+                                        {menu.title}
+                                    </span>
+                                )}
 
                             </Link>
                         );
@@ -124,7 +172,21 @@ export default function Sidebar() {
                             <button
                                 onClick={() => toggleMenu(menu.title)}
                                 className={`
-                                    flex w-full items-center justify-between rounded-2xl px-4 py-3 text-sm font-medium transition-all
+                                    flex
+                                    w-full
+                                    items-center
+
+                                    ${collapsed
+                                        ? "justify-center"
+                                        : "justify-between"
+                                    }
+
+                                    rounded-2xl
+                                    px-4
+                                    py-3
+                                    text-sm
+                                    font-medium
+                                    transition-all
 
                                     ${isActive
                                         ? "bg-blue-900 text-white"
@@ -133,66 +195,95 @@ export default function Sidebar() {
                                 `}
                             >
 
-                                <div className="flex items-center gap-3">
+                                <div
+                                    className={`
+                                        flex items-center
+                                        ${collapsed
+                                            ? ""
+                                            : "gap-3"
+                                        }
+                                    `}
+                                >
 
                                     <Icon size={18} />
 
-                                    <span>
-                                        {menu.title}
-                                    </span>
+                                    {!collapsed && (
+                                        <span>
+                                            {menu.title}
+                                        </span>
+                                    )}
 
                                 </div>
 
-                                <ChevronDown
-                                    size={18}
-                                    className={`
-                                        transition-transform
-                                        ${isOpen ? "rotate-180" : ""}
-                                    `}
-                                />
+                                {!collapsed && (
+                                    <ChevronDown
+                                        size={18}
+                                        className={`
+                                            transition-transform
+                                            ${isOpen ? "rotate-180" : ""}
+                                        `}
+                                    />
+                                )}
 
                             </button>
 
                             {/* SUB MENU */}
-                            <div
-                                className={`
-                                    overflow-hidden transition-all duration-300
+                            {!collapsed && (
+                                <div
+                                    className={`
+                                        overflow-hidden
+                                        transition-all
+                                        duration-300
 
-                                    ${isOpen
-                                        ? "mt-2 max-h-96"
-                                        : "max-h-0"
-                                    }
-                                `}
-                            >
+                                        ${isOpen
+                                            ? "mt-2 max-h-96"
+                                            : "max-h-0"
+                                        }
+                                    `}
+                                >
 
-                                <div className="ml-4 space-y-1 border-l border-blue-800 pl-4">
+                                    <div
+                                        className="
+                                            ml-4
+                                            space-y-1
+                                            border-l
+                                            border-blue-800
+                                            pl-4
+                                        "
+                                    >
 
-                                    {menu.children.map((subMenu) => {
+                                        {menu.children.map((subMenu) => {
 
-                                        const isSubActive =
-                                            pathname === subMenu.href;
+                                            const isSubActive =
+                                                pathname === subMenu.href;
 
-                                        return (
-                                            <Link
-                                                key={subMenu.href}
-                                                href={subMenu.href}
-                                                className={`
-                                                    flex rounded-xl px-3 py-2 text-sm transition-all
+                                            return (
+                                                <Link
+                                                    key={subMenu.href}
+                                                    href={subMenu.href}
+                                                    className={`
+                                                        flex
+                                                        rounded-xl
+                                                        px-3
+                                                        py-2
+                                                        text-sm
+                                                        transition-all
 
-                                                    ${isSubActive
-                                                        ? "bg-white text-blue-950 font-semibold"
-                                                        : "text-blue-200 hover:bg-blue-900 hover:text-white"
-                                                    }
-                                                `}
-                                            >
-                                                {subMenu.title}
-                                            </Link>
-                                        );
-                                    })}
+                                                        ${isSubActive
+                                                            ? "bg-white text-blue-950 font-semibold"
+                                                            : "text-blue-200 hover:bg-blue-900 hover:text-white"
+                                                        }
+                                                    `}
+                                                >
+                                                    {subMenu.title}
+                                                </Link>
+                                            );
+                                        })}
+
+                                    </div>
 
                                 </div>
-
-                            </div>
+                            )}
 
                         </div>
                     );
