@@ -1,16 +1,36 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
+import { redirect } from "next/navigation"
 
 export default function Navbar() {
 
     return (
-        <div
-            className="h-16 border-b bg-white px-6 flex items-center justify-between">
-            <h1 className="font-bold text-xl">
+        <header
+            className="
+                sticky
+                top-0
+                z-50
+                flex
+                h-16
+                items-center
+                justify-between
+                border-b
+                bg-white
+                px-6
+            "
+        >
+
+            {/* PAGE TITLE */}
+            <h1 className="text-xl font-bold text-gray-800">
                 Dashboard
             </h1>
-            <Button>
+
+            {/* ACTION */}
+            <Button onClick={() => redirect("/login")}>
                 Logout
             </Button>
-        </div>
+
+        </header>
     )
 }

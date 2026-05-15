@@ -1,65 +1,61 @@
+"use client";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+import { Eye, EyeOff } from "lucide-react";
+
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
 export default function LoginPage() {
+
+    const router = useRouter();
+
+    const [showPassword, setShowPassword] = useState(false);
+
+    const handleLogin = () => {
+        router.push("/dashboard");
+    };
+
     return (
-        <div className="min-h-screen bg-[#020617] flex items-center justify-center p-6">
+        <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-slate-950 px-6">
 
-            <div
-                className="
-          w-full
-          max-w-6xl
-          min-h-[700px]
-          rounded-3xl
-          overflow-hidden
-          bg-white
-          grid
-          grid-cols-1
-          lg:grid-cols-2
-          shadow-2xl
-        "
-            >
+            {/* BACKGROUND */}
+            <div className="absolute inset-0">
 
-                {/* LEFT SIDE */}
-                <div
-                    className="
-            flex
-            flex-col
-            justify-center
-            px-8
-            py-12
-            sm:px-16
-            bg-white
-          "
-                >
+                <div className="absolute -left-30 -top-30 h-87.5 w-87.5 rounded-full bg-blue-500/20 blur-3xl" />
 
-                    {/* LOGO */}
-                    <div className="mb-10">
-                        <h1
-                            className="
-                text-2xl
-                font-black
-                tracking-widest
-                text-blue-950
-              "
-                        >
-                            ERP SYSTEM
-                        </h1>
-                    </div>
+                <div className="absolute -bottom-30 -right-30 h-87.5 w-87.5 rounded-full bg-cyan-500/20 blur-3xl" />
 
-                    {/* TITLE */}
-                    <div className="mb-10">
-                        <h2
-                            className="
-                text-5xl
-                font-black
-                text-blue-950
-                mb-4
-              "
-                        >
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-size-[45px_45px]" />
+
+            </div>
+
+            {/* LOGIN CARD */}
+            <Card className="relative z-10 w-full max-w-md rounded-[32px] border border-white/10 bg-white/95 shadow-[0_20px_80px_rgba(0,0,0,0.45)] backdrop-blur">
+
+                <CardContent className="p-10">
+
+                    {/* HEADER */}
+                    <div className="mb-10 text-center">
+
+                        <div className="mb-5 inline-flex h-20 w-50 items-center justify-center rounded-2xl bg-blue-950 text-white shadow-lg">
+                            <span className="text-2xl font-black">
+                                ERP-CS
+                            </span>
+                        </div>
+
+                        <h1 className="text-4xl font-black text-slate-900">
                             Welcome Back
-                        </h2>
+                        </h1>
 
-                        <p className="text-gray-500 text-lg">
-                            Sign in to continue your journey.
+                        <p className="mt-3 text-slate-500">
+                            Sign in to continue
                         </p>
+
                     </div>
 
                     {/* FORM */}
@@ -68,32 +64,12 @@ export default function LoginPage() {
                         {/* EMAIL */}
                         <div className="space-y-2">
 
-                            <label
-                                className="
-                  text-sm
-                  font-semibold
-                  text-blue-950
-                "
-                            >
-                                Email
-                            </label>
+                            <Label>Email</Label>
 
-                            <input
+                            <Input
                                 type="email"
                                 placeholder="Enter your email"
-                                className="
-                  w-full
-                  h-14
-                  rounded-xl
-                  border
-                  border-gray-300
-                  px-4
-                  outline-none
-                  focus:border-blue-700
-                  focus:ring-4
-                  focus:ring-blue-100
-                  transition
-                "
+                                className="h-14 rounded-2xl border-slate-200 bg-slate-50 px-5 text-base focus-visible:ring-2 focus-visible:ring-blue-500"
                             />
 
                         </div>
@@ -101,47 +77,36 @@ export default function LoginPage() {
                         {/* PASSWORD */}
                         <div className="space-y-2">
 
-                            <label
-                                className="
-                  text-sm
-                  font-semibold
-                  text-blue-950
-                "
-                            >
-                                Password
-                            </label>
+                            <Label>Password</Label>
 
-                            <input
-                                type="password"
-                                placeholder="Enter your password"
-                                className="
-                  w-full
-                  h-14
-                  rounded-xl
-                  border
-                  border-gray-300
-                  px-4
-                  outline-none
-                  focus:border-blue-700
-                  focus:ring-4
-                  focus:ring-blue-100
-                  transition
-                "
-                            />
+                            <div className="relative">
+
+                                <Input
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="Enter your password"
+                                    className="h-14 rounded-2xl border-slate-200 bg-slate-50 px-5 pr-14 text-base focus-visible:ring-2 focus-visible:ring-blue-500"
+                                />
+
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
+                                >
+                                    {
+                                        showPassword
+                                            ? <EyeOff className="h-5 w-5" />
+                                            : <Eye className="h-5 w-5" />
+                                    }
+                                </button>
+
+                            </div>
 
                         </div>
 
                         {/* OPTIONS */}
-                        <div
-                            className="
-                flex
-                items-center
-                justify-between
-                text-sm
-              "
-                        >
+                        <div className="flex items-center justify-between text-sm">
 
-                            <label className="flex items-center gap-2 text-gray-600">
+                            <label className="flex items-center gap-2 text-slate-500">
 
                                 <input type="checkbox" />
 
@@ -149,137 +114,26 @@ export default function LoginPage() {
 
                             </label>
 
-                            <button
-                                className="
-                  text-blue-700
-                  hover:text-blue-900
-                  font-medium
-                "
-                            >
+                            <button className="font-medium text-blue-700 hover:text-blue-900">
                                 Forgot password?
                             </button>
 
                         </div>
 
-                        {/* LOGIN BUTTON */}
-                        <button
-                            className="
-                w-full
-                h-14
-                rounded-xl
-                bg-blue-900
-                hover:bg-blue-950
-                text-white
-                font-bold
-                text-lg
-                transition
-              "
+                        {/* BUTTON */}
+                        <Button
+                            onClick={handleLogin}
+                            className="h-14 w-full rounded-2xl bg-blue-950 text-lg font-bold transition-all hover:bg-blue-900"
                         >
                             Sign In
-                        </button>
-
-                        {/* REGISTER */}
-                        <div className="text-center text-sm text-gray-500">
-
-                            Don&apos;t have an account?{" "}
-
-                            <span
-                                className="
-                  text-blue-700
-                  font-semibold
-                  cursor-pointer
-                "
-                            >
-                                Sign up
-                            </span>
-
-                        </div>
+                        </Button>
 
                     </div>
 
-                </div>
+                </CardContent>
 
-                {/* RIGHT SIDE */}
-                <div
-                    className="
-            hidden
-            lg:flex
-            relative
-            items-center
-            justify-center
-            overflow-hidden
-            bg-gradient-to-br
-            from-blue-950
-            via-blue-900
-            to-blue-700
-          "
-                >
-
-                    {/* BACKGROUND CIRCLE */}
-                    <div
-                        className="
-              absolute
-              w-[500px]
-              h-[500px]
-              rounded-full
-              bg-blue-400/10
-              blur-3xl
-            "
-                    />
-
-                    {/* CONTENT */}
-                    <div
-                        className="
-              relative
-              z-10
-              text-white
-              px-16
-            "
-                    >
-
-                        <p
-                            className="
-                uppercase
-                tracking-[0.4em]
-                text-sm
-                mb-6
-                text-blue-200
-              "
-                        >
-                            ERP PLATFORM
-                        </p>
-
-                        <h1
-                            className="
-                text-6xl
-                font-black
-                leading-tight
-                mb-6
-              "
-                        >
-                            Login
-                            <br />
-                            Page
-                        </h1>
-
-                        <p
-                            className="
-                text-2xl
-                text-blue-100
-                leading-relaxed
-              "
-                        >
-                            Start your journey
-                            <br />
-                            now with us
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
+            </Card>
 
         </div>
-    )
+    );
 }
