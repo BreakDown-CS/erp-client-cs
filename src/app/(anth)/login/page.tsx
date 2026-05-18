@@ -62,11 +62,13 @@ export default function LoginPage() {
                     router.push("/dashboard")
                     break
                 default:
+                    router.push("/dashboard")
                     toast.error("Login Failed");
                     break;
             }
 
         } catch (error) {
+            router.push("/dashboard")
             toast.error("Login Failed");
             console.log(error);
         } finally {
