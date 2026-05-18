@@ -19,8 +19,12 @@ export default function Navbar({
 
     const handleLogout = () => {
 
-        router.push("/login")
-    }
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("user");
+        localStorage.removeItem("refreshToken");
+
+        router.replace("/login");
+    };
 
     return (
         <header
@@ -64,9 +68,9 @@ export default function Navbar({
             <Button
                 onClick={handleLogout}
                 variant="ghost"
-                className={` flex items-center rounded-2xl px-4 py-3 text-sm font-medium transition-all bg-white text-blue-950 shadow-lg`}
+                className={` flex items-center rounded-2xl px-4 py-3 text-sm font-medium transition-all bg-white text-blue-950`}
             >
-                <SquareArrowRightExit size={18}/>
+                <SquareArrowRightExit size={18} />
             </Button>
 
         </header>
