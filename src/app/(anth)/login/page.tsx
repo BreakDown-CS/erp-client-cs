@@ -50,6 +50,10 @@ export default function LoginPage() {
 
             switch (response.status) {
                 case 200:
+                    if (response.data.message === "user not found") {
+                        return toast.warning("ไม่พบผู้ใช้งาน");
+                    }
+
                     const { access_token, user } = response.data.data;
 
                     // เก็บ token
@@ -62,13 +66,11 @@ export default function LoginPage() {
                     router.push("/dashboard")
                     break
                 default:
-                    router.push("/dashboard")
                     toast.error("Login Failed");
                     break;
             }
 
         } catch (error) {
-            router.push("/dashboard")
             toast.error("Login Failed");
             console.log(error);
         } finally {

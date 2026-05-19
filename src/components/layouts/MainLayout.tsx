@@ -47,7 +47,7 @@ export default function DashboardLayout({
                             shadow-sm
                         "
                     >
-                        <CardContent className="p-6">
+                        <CardContent>
                             {children}
                         </CardContent>
 

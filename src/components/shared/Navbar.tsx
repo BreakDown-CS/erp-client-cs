@@ -60,7 +60,7 @@ export default function Navbar({
                 </button>
 
                 <h1 className="text-xl font-bold text-gray-800">
-                    Dashboard
+                    ERP System™ On cloud
                 </h1>
 
             </div>
