@@ -7,8 +7,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ListStaffForm, ListStaffSchema } from "@/modules/staffs/staff.schema";
 import { GetStaffList } from "@/modules/staffs/staff.service";
+import { PayloadListStaff, StaffList } from "@/modules/staffs/staff.type";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ListRestart, Search } from "lucide-react";
+import { ListRestart, Pencil, Search, UserRoundPlus } from "lucide-react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -27,50 +29,9 @@ export default function StaffListPage() {
         },
     });
 
-    const invoices = [
-        {
-            invoice: "INV001",
-            paymentStatus: "Paid",
-            totalAmount: "$250.00",
-            paymentMethod: "Credit Card",
-        },
-        {
-            invoice: "INV002",
-            paymentStatus: "Pending",
-            totalAmount: "$150.00",
-            paymentMethod: "PayPal",
-        },
-        {
-            invoice: "INV003",
-            paymentStatus: "Unpaid",
-            totalAmount: "$350.00",
-            paymentMethod: "Bank Transfer",
-        },
-        {
-            invoice: "INV004",
-            paymentStatus: "Paid",
-            totalAmount: "$450.00",
-            paymentMethod: "Credit Card",
-        },
-        {
-            invoice: "INV005",
-            paymentStatus: "Paid",
-            totalAmount: "$550.00",
-            paymentMethod: "PayPal",
-        },
-        {
-            invoice: "INV006",
-            paymentStatus: "Pending",
-            totalAmount: "$200.00",
-            paymentMethod: "Bank Transfer",
-        },
-        {
-            invoice: "INV007",
-            paymentStatus: "Unpaid",
-            totalAmount: "$300.00",
-            paymentMethod: "Credit Card",
-        },
-    ]
+    // LIST STAFF
+    const [staffList, setStaffList] = useState<StaffList[]>([]);
+    const [staffListTotal, setStaffListTotal] = useState<number>(0);
 
     const branches = [
         { id: "0", name: "All Branches" },
@@ -92,48 +53,52 @@ export default function StaffListPage() {
         { id: "3", name: "IT" },
     ]
 
-    // SUBMIT
+    const staffTest = [
+        { id: "0", }, { id: "0", }, { id: "1", }, { id: "3", }, { id: "3", },
+        { id: "1", }, { id: "2", }, { id: "2", }, { id: "3", }, { id: "3", },
+        { id: "3", }, { id: "3", }, { id: "3", }, { id: "3", }, { id: "3", },
+        { id: "0", }, { id: "0", }, { id: "1", }, { id: "3", }, { id: "3", },
+        { id: "1", }, { id: "2", }, { id: "2", }, { id: "3", }, { id: "3", },
+        { id: "3", }, { id: "3", }, { id: "3", }, { id: "3", }, { id: "3", },
+
+    ]
     const onSubmit = async (values: ListStaffForm) => {
         try {
-            const patyloadStaffList: ListStaffForm = {
+            const patyloadStaffList: PayloadListStaff = {
                 username: values.username,
                 em_code: values.em_code,
                 branches_id: values.branches_id,
                 full_name: values.full_name,
                 status: values.status,
                 department_id: values.department_id,
+                page: 1,
+                limit: 10
             };
 
             const response = await GetStaffList(patyloadStaffList);
 
-            console.log(response);
-
-            // switch (response.status) {
-            //     case 200:
-            //         const { access_token, user } = response.data.data;
-
-            //         // เก็บ token
-            //         localStorage.setItem("access_token", access_token);
-
-            //         // เก็บ user
-            //         localStorage.setItem("user", JSON.stringify(user));
-
-            //         toast.success("Login Success");
-            //         router.push("/dashboard")
-            //         break
-            //     default:
-            //         router.push("/dashboard")
-            //         toast.error("Login Failed");
-            //         break;
-            // }
+            switch (response.code) {
+                case 200:
+                    setStaffList(response.result);
+                    setStaffListTotal(response.meta.total);
+                    toast.success(response.message);
+                    break
+                default:
+                    toast.error(response.message);
+                    break;
+            }
 
         } catch (error) {
-            toast.error("Login Failed");
+            toast.error("Search Failed");
             console.log(error);
         } finally {
             // setLoading(false);
         }
     };
+
+    const handleAddNewStaff = () => {
+        toast("Add New Staff");
+    }
 
     return (
         <div className="grid grid-cols-1 grid-rows-1 gap-2 ">
@@ -150,27 +115,35 @@ export default function StaffListPage() {
 
                         <div className="flex gap-2">
                             <Button
+                                type="button"
+                                onClick={handleAddNewStaff}
+                                className="h-8 w-30 rounded-b-md border bg-green-500 text-white hover:bg-green-700"
+                            >
+                                <UserRoundPlus />
+                                เพิ่มพนักงาน
+                            </Button>
+
+                            <Button
                                 type="submit"
                                 className="h-8 w-30 rounded-b-md border bg-blue-950 text-white hover:bg-blue-900"
                             >
                                 <Search />
-                                ค้นหา
+                                ค้นหารายการ
                             </Button>
 
                             <Button
                                 type="button"
                                 onClick={() => form.reset()}
-                                className="h-8 w-30 rounded-b-md border border-gray-300 bg-blue-50 text-black hover:bg-blue-900 hover:text-white"
+                                className="h-8 w-36 rounded-b-md border border-gray-300 bg-blue-50 text-black hover:bg-blue-900 hover:text-white"
                             >
                                 <ListRestart />
-                                ล้าง
+                                รีเซ็ตรายการค้นหา
                             </Button>
                         </div>
                     </div>
 
 
                     <div className="grid grid-cols-8 grid-rows-1 gap-2">
-
                         {/* USERNAME */}
                         <FormField
                             control={form.control}
@@ -321,59 +294,80 @@ export default function StaffListPage() {
                 {/* HEADER */}
                 <TableHeader className="bg-slate-50">
                     <TableRow className="border-b border-slate-200 hover:bg-transparent">
-                        <TableHead className="w-30 text-slate-600 font-semibold">
-                            Invoice
+                        <TableHead className="w-30 text-center text-slate-600 font-semibold">
+                            รหัสพนักงาน
                         </TableHead>
-                        <TableHead className="text-slate-600 font-semibold">
-                            Status
+                        <TableHead className="text-center text-slate-600 font-semibold">
+                            EM CODE
                         </TableHead>
-                        <TableHead className="text-slate-600 font-semibold">
-                            Method
+                        <TableHead className="text-center text-slate-600 font-semibold">
+                            สาขา
                         </TableHead>
-                        <TableHead className="text-right text-slate-600 font-semibold">
-                            Amount
+                        <TableHead className="text-center text-slate-600 font-semibold">
+                            สถานะ
+                        </TableHead>
+                        <TableHead className="text-left text-slate-600 font-semibold">
+                            ชื่อเต็ม
+                        </TableHead>
+                        <TableHead className="text-center text-slate-600 font-semibold">
+                            แผนก
+                        </TableHead>
+                        <TableHead className="text-center text-slate-600 font-semibold">
+                            ตำแหน่ง
+                        </TableHead>
+                        <TableHead className="text-center text-slate-600 font-semibold">
+                            เครื่องมือ
                         </TableHead>
                     </TableRow>
                 </TableHeader>
 
                 {/* BODY */}
                 <TableBody>
-                    {invoices.map((invoice) => (
+                    {staffList.map((staff) => (
                         <TableRow
-                            key={invoice.invoice}
-                            className="
-                    border-b border-slate-100
-                    hover:bg-indigo-50/40
-                    transition-colors
-                "
+                            key={staff.id}
+                            className=" border-b border-slate-100 hover:bg-indigo-50/40 transition-colors"
                         >
-                            <TableCell className="font-medium text-slate-900">
-                                {invoice.invoice}
+                            <TableCell className="text-center font-medium text-slate-900">
+                                {staff.username}
                             </TableCell>
-
-                            {/* STATUS */}
-                            <TableCell>
-                                <span
+                            <TableCell className="text-center font-medium text-slate-900">
+                                {staff.employee_code}
+                            </TableCell>
+                            <TableCell className="text-center font-medium text-slate-900">
+                                {staff.branch_name}
+                            </TableCell>
+                            <TableCell className="text-center">
+                                <div
                                     className={`
-                            inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium
-                            ${invoice.paymentStatus === "Paid"
+                                        inline-flex items-center justify-center rounded-full px-2.5 py-1 text-xs font-medium
+                                        ${staff.status === "active"
                                             ? "bg-emerald-100 text-emerald-700"
-                                            : invoice.paymentStatus === "Pending"
-                                                ? "bg-amber-100 text-amber-700"
-                                                : "bg-rose-100 text-rose-700"
+                                            : "bg-rose-100 text-rose-700"
                                         }
-                        `}
+`}
                                 >
-                                    {invoice.paymentStatus}
-                                </span>
+                                    {staff.status}
+                                </div>
                             </TableCell>
-
-                            <TableCell className="text-slate-600">
-                                {invoice.paymentMethod}
+                            <TableCell className="text-left font-medium text-slate-900">
+                                {staff.first_name} {staff.last_name}
                             </TableCell>
+                            <TableCell className="text-center font-medium text-slate-900">
+                                {staff.department_name}
+                            </TableCell>
+                            <TableCell className="text-center font-medium text-slate-900">
+                                {staff.position_name}
+                            </TableCell>
+                            <TableCell className="text-center font-medium text-slate-900">
 
-                            <TableCell className="text-right font-semibold text-slate-900">
-                                ${invoice.totalAmount}
+                                <Button
+                                    type="button"
+                                    onClick={() => form.reset()}
+                                    className="h-8 w-8 rounded-b-md border border-gray-300 bg-blue-50 text-black hover:bg-blue-900 hover:text-white"
+                                >
+                                    <Pencil />
+                                </Button>
                             </TableCell>
                         </TableRow>
                     ))}
@@ -382,11 +376,11 @@ export default function StaffListPage() {
                 {/* FOOTER */}
                 <TableFooter className="bg-slate-50">
                     <TableRow>
-                        <TableCell colSpan={3} className="font-semibold text-slate-700">
+                        <TableCell colSpan={7} className="font-semibold text-slate-700">
                             Total
                         </TableCell>
                         <TableCell className="text-right font-bold text-slate-900">
-                            $2,500.00
+                            {staffListTotal} รายการ
                         </TableCell>
                     </TableRow>
                 </TableFooter>

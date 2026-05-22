@@ -5,7 +5,7 @@ export const AuthLogin = async (data: LoginForm) => {
     try {
         const response = await api.post("/setting/auth/login", data);
         
-        return response
+        return response.data
     } catch (error) {
         console.log("AuthLogin Error :", error);
         throw error;

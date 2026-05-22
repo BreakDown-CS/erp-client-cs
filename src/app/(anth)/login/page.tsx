@@ -48,13 +48,13 @@ export default function LoginPage() {
 
             const response = await AuthLogin(payloadLogin);
 
-            switch (response.status) {
+            switch (response.code) {
                 case 200:
-                    if (response.data.message === "user not found") {
+                    if (response.message === "user not found") {
                         return toast.warning("ไม่พบผู้ใช้งาน");
                     }
 
-                    const { access_token, user } = response.data.data;
+                    const { access_token, user } = response.result
 
                     // เก็บ token
                     localStorage.setItem("access_token", access_token);
