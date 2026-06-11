@@ -7,7 +7,7 @@ export type PayloadListStaff = {
     department_id: string;
     page: number;
     limit: number;
-};
+}
 
 export type StaffList = {
     id: string;
@@ -19,4 +19,26 @@ export type StaffList = {
     department_name: string;
     position_name: string;
     status: string;
+}
+
+export type PayloadSaveStaff = {
+    username: string;
+    em_code: string;
+    status: string;
+    branches_id: number;
+    password: string;
+    password_confirm: string;
+    start_work: string;
+    end_work: string;
+    card_id: string;
+    work_type: string;
+    department_id: number;
+    full_name: string;
+    nickname: string;
+    tel: string;
+    email: string;
+    birthday: string;
+    bank_no: string;
+    bank_id: number;
+    address: string;
 }
