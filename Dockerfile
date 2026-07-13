@@ -45,8 +45,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 # สลับไปใช้ user ที่ปลอดภัย
 USER nextjs
 
-EXPOSE 3000
-ENV PORT=3000
+EXPOSE 8000
+ENV PORT=8000
 ENV HOSTNAME="0.0.0.0"
 
 # เมื่อใช้ standalone เราจะรันผ่าน node server.js โดยตรง ไม่ต้องผ่าน npm start
