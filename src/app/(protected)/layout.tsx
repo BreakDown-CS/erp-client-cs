@@ -21,16 +21,16 @@ export default function ProtectedLayout({
 
     useEffect(() => {
 
-        const token = localStorage.getItem("access_token");
+        // const token = localStorage.getItem("access_token");
         
-        if (!token) {
+        // if (!token) {
 
-            router.replace("/login");
+        //     router.replace("/login");
 
-            setIsAuthenticated(false);
+        //     setIsAuthenticated(false);
 
-            return;
-        }
+        //     return;
+        // }
 
         setIsAuthenticated(true);
 
