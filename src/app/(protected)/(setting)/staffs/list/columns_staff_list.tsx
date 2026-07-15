@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { StaffList } from "@/modules/staffs/staff.type";
-import { Button, TableColumnsType, Tooltip } from "antd";
 import { EditOutlined } from "@ant-design/icons";
+import { Button, TableColumnsType, Tooltip } from "antd";
 
 export const StaffListColumns: TableColumnsType<StaffList> = [
-    // export const StaffListColumns = (handleOpenDrawerRequest: (warrantyRequestId: number) => void): TableColumnsType<WarrantyRequestListForColumns> => [
     {
         title: 'ลำดับ',
         dataIndex: 'id',
@@ -89,7 +89,7 @@ export const StaffListColumns: TableColumnsType<StaffList> = [
         dataIndex: 'index',
         key: 'index',
         align: 'center',
-        render: (_text, _record) => (
+        render: (_text, record) => (
             <div
                 style={{
                     display: 'flex',
@@ -108,6 +108,7 @@ export const StaffListColumns: TableColumnsType<StaffList> = [
                             boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
                             transition: 'all 0.3s ease',
                         }}
+                        icon={<EditOutlined/>}
                         // onClick={() =>
                         //     handleOpenDrawerRequest(record.warranty_request_id)
                         // }

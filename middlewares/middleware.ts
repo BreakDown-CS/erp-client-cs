@@ -11,7 +11,6 @@ export function middleware(
     const isLoginPage =
         request.nextUrl.pathname === "/login";
 
-    // ยังไม่ได้ login
     if (!token && !isLoginPage) {
 
         return NextResponse.redirect(
@@ -19,7 +18,6 @@ export function middleware(
         );
     }
 
-    // login แล้ว แต่จะเข้า login อีก
     if (token && isLoginPage) {
 
         return NextResponse.redirect(
