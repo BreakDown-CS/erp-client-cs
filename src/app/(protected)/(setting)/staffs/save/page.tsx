@@ -71,7 +71,7 @@ export default function SaveStaffPage({ staffId, opneDrawerStaff, setOpenDrawerN
         <Drawer
             title={staffId > 0 ? "แก้ไขพนักงาน" : "เพิ่มพนักงาน"}
             placement="right"
-            size={'large'}
+            size={'1000'}
             open={opneDrawerStaff}
             onClose={handleClose}
             extra={

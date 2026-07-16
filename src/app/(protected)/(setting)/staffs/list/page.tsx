@@ -1,20 +1,35 @@
-"use client"
+"use client";
+
+import { useMemo, useState } from "react";
+import { Form, Space, Table } from "antd";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ListRestart, Search, UserRoundPlus } from "lucide-react";
 
 import AppButton from "@/components/ui/AppButton";
 import FormInput from "@/components/ui/FormInput";
 import FormSelect from "@/components/ui/FormSelect";
-import { branchOptions, departmentOptions, statusOptions } from "@/modules/staffs/staff.constants";
-import { ListStaffForm, ListStaffSchema } from "@/modules/staffs/staff.schema";
+
+import {
+    branchOptions,
+    departmentOptions,
+    statusOptions,
+} from "@/modules/staffs/staff.constants";
+
+import {
+    ListStaffForm,
+    ListStaffSchema,
+} from "@/modules/staffs/staff.schema";
+
 import { StaffList } from "@/modules/staffs/staff.type";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, Space, Table } from "antd";
-import { ListRestart, Search, UserRoundPlus } from "lucide-react";
-import { useForm } from "react-hook-form";
+
 import { StaffListColumns } from "./columns_staff_list";
-import { useState } from "react";
+import SaveStaffPage from "../save/page";
 
 export default function StaffListPage() {
-    const { control, handleSubmit, reset, } = useForm<ListStaffForm>({
+    const [opneDrawerNewStaff, setOpenDrawerNewStaff] = useState<boolean>(false);
+    
+    const { control, handleSubmit, reset } = useForm<ListStaffForm>({
         resolver: zodResolver(ListStaffSchema),
         defaultValues: {
             username: "",
@@ -26,74 +41,125 @@ export default function StaffListPage() {
         },
     });
 
-    const dataSource: StaffList[] = Array.from(
-        { length: 50 },
-        (_, index) => ({
-            id: String(index + 1),
-            employee_code: `EMP${String(index + 1).padStart(4, "0")}`,
-            first_name: `FirstName${index + 1}`,
-            last_name: `LastName${index + 1}`,
-            username: `user${index + 1}`,
-            branch_name: ["Bangkok", "Chiang Mai", "Khon Kaen", "Phuket"][index % 4],
-            department_name: ["IT", "HR", "Finance", "Sales"][index % 4],
-            position_name: ["Developer", "Manager", "Officer", "Supervisor"][index % 4],
-            status: index % 2 === 0 ? "ACTIVE" : "INACTIVE",
-        })
+    /**
+     * Mock Data
+     */
+    const mockData = useMemo<StaffList[]>(
+        () =>
+            Array.from({ length: 100 }, (_, index) => ({
+                id: String(index + 1),
+                employee_code: `EMP${String(index + 1).padStart(4, "0")}`,
+                first_name: `FirstName${index + 1}`,
+                last_name: `LastName${index + 1}`,
+                username: `user${index + 1}`,
+                branch_name: ["Bangkok", "Chiang Mai", "Khon Kaen", "Phuket"][
+                    index % 4
+                ],
+                department_name: ["IT", "HR", "Finance", "Sales"][index % 4],
+                position_name: [
+                    "Developer",
+                    "Manager",
+                    "Officer",
+                    "Supervisor",
+                ][index % 4],
+                status: index % 2 === 0 ? "ACTIVE" : "INACTIVE",
+            })),
+        []
     );
 
+    const [staffList, setStaffList] = useState<StaffList[]>(mockData);
 
-    const [staffList, setStaffList] = useState<StaffList[]>(dataSource);
+    /**
+     * Search
+     */
+    const onSubmit = (form: ListStaffForm) => {
+        const result = mockData.filter((item) => {
+            const fullName = `${item.first_name} ${item.last_name}`.toLowerCase();
+
+            return (
+                (!form.username ||
+                    item.username
+                        .toLowerCase()
+                        .includes(form.username.toLowerCase())) &&
+                (!form.em_code ||
+                    item.employee_code
+                        .toLowerCase()
+                        .includes(form.em_code.toLowerCase())) &&
+                (!form.full_name ||
+                    fullName.includes(form.full_name.toLowerCase())) &&
+                (!form.branches_id ||
+                    item.branch_name === form.branches_id) &&
+                (!form.department_id ||
+                    item.department_name === form.department_id) &&
+                (!form.status ||
+                    item.status === form.status)
+            );
+        });
+
+        setStaffList(result);
+    };
+
+    /**
+     * Reset Form
+     */
+    const handleReset = () => {
+        reset();
+        setStaffList(mockData);
+    };
+
+    const handleEditStaff = (staffId: string) => {
+        console.log("handleEditStaff : ", staffId)
+    }
 
     return (
         <>
             <div className="flex items-center justify-between mb-4">
-                <h1 className="text-xl font-semibold">
-                    รายการพนักงาน
-                </h1>
+                <h1 className="text-xl font-semibold">รายการพนักงาน</h1>
 
                 <Space>
                     <AppButton
                         variant="back"
                         icon={<UserRoundPlus size={16} />}
-                    // onClick={handleClose}
+                        onClick={() => setOpenDrawerNewStaff(true)}
                     >
                         เพิ่มพนักงาน
                     </AppButton>
 
                     <AppButton
-                        variant="reset"
+                        variant="save"
                         icon={<Search size={16} />}
-                        onClick={() => reset()}
+                        onClick={handleSubmit(onSubmit)}
                     >
                         ค้นหารายการ
                     </AppButton>
 
                     <AppButton
-                        variant="save"
+                        variant="reset"
                         icon={<ListRestart size={16} />}
-                    // onClick={handleSubmit(onSubmit)}
+                        onClick={handleReset}
                     >
                         รีเซ็ตฟอร์ม
                     </AppButton>
                 </Space>
             </div>
-            <Form layout="vertical">
-                <div className="grid grid-cols-10 gap-3 justify-content-center a">
-                    {/* USERNAME */}
+
+            <Form
+                layout="vertical"
+                onFinish={handleSubmit(onSubmit)}
+            >
+                <div className="grid grid-cols-6 gap-3">
                     <FormInput<ListStaffForm>
                         name="username"
                         control={control}
                         placeholder="ชื่อผู้ใช้งาน"
                     />
 
-                    {/* EM CODE */}
                     <FormInput<ListStaffForm>
                         name="em_code"
                         control={control}
                         placeholder="EM CODE"
                     />
 
-                    {/* BRANCH */}
                     <FormSelect<ListStaffForm>
                         name="branches_id"
                         control={control}
@@ -101,14 +167,12 @@ export default function StaffListPage() {
                         options={branchOptions}
                     />
 
-                    {/* FULL NAME */}
                     <FormInput<ListStaffForm>
                         name="full_name"
                         control={control}
                         placeholder="ชื่อเต็ม"
                     />
 
-                    {/* STATUS */}
                     <FormSelect<ListStaffForm>
                         name="status"
                         control={control}
@@ -116,7 +180,6 @@ export default function StaffListPage() {
                         options={statusOptions}
                     />
 
-                    {/* DEPARTMENT */}
                     <FormSelect<ListStaffForm>
                         name="department_id"
                         control={control}
@@ -125,10 +188,23 @@ export default function StaffListPage() {
                     />
                 </div>
             </Form>
+
             <Table<StaffList>
-                columns={StaffListColumns}
+                rowKey="id"
+                className="mt-4"
+                columns={StaffListColumns(handleEditStaff)}
                 dataSource={staffList}
+                pagination={{
+                    pageSize: 25,
+                    showSizeChanger: true,
+                    pageSizeOptions: [10, 25, 50, 100],
+                    showTotal: (total) => `ทั้งหมด ${total} รายการ`,
+                }}
+                scroll={{ y: 550 }}
+                size="small"
             />
+
+            <SaveStaffPage staffId={0} opneDrawerStaff={opneDrawerNewStaff} setOpenDrawerNewStaff={setOpenDrawerNewStaff}/>        
         </>
-    )
+    );
 }
