@@ -1,8 +1,8 @@
-import API_SETTING_URL from "@/configs/confg";
+import apiSetting from "@/configs/config";
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: API_SETTING_URL,
+    baseURL: apiSetting,
     timeout: 10000,
     headers: {
         "Content-Type": "application/json",
