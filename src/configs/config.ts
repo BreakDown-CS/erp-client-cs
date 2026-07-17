@@ -1,3 +1,3 @@
-const apiSetting = process.env.API_SETTING_URL || "http://localhost";
+const apiSetting = process.env.NEXT_PUBLIC_API_SETTING_URL || "http://localhost";
 
 export default apiSetting;
