@@ -18,6 +18,10 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+# 👇 เพิ่ม 2 บรรทัดนี้
+ARG NEXT_PUBLIC_API_SETTING_URL
+ENV NEXT_PUBLIC_API_SETTING_URL=$NEXT_PUBLIC_API_SETTING_URL
+
 ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN npm run build
