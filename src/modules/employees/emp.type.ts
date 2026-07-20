@@ -1,3 +1,8 @@
+export type PayloadDropDown = {
+    label: string;
+    value: string | number | boolean;
+}
+
 export type PayloadListStaff = {
     username: string;
     em_code: string;
@@ -22,23 +27,21 @@ export type StaffList = {
 }
 
 export type PayloadSaveStaff = {
-    username: string;
     em_code: string;
-    status: string;
-    branches_id: number;
-    password: string;
-    password_confirm: string;
-    start_work: string;
-    end_work: string;
-    card_id: string;
-    work_type: string;
-    department_id: number;
-    full_name: string;
+    first_name_th: string;
+    last_name_th: string;
+    first_name_en: string;
+    last_name_en: string;
     nickname: string;
-    tel: string;
-    email: string;
+    gender: string;
     birthday: string;
-    bank_no: string;
-    bank_id: number;
-    address: string;
+    email: string;
+    phone: string;
+    branch_id: string;
+    department_id: string;
+    position_id: string;
+    status_id: string;
+    username: string;
+    password: string;
+    remark: string;
 }

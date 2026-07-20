@@ -13,6 +13,7 @@ interface Props<T extends FieldValues> {
     control: Control<T>;
     placeholder: string;
     type?: string;
+    disabled?: boolean;
 }
 
 export default function FormInput<T extends FieldValues>({
@@ -20,6 +21,7 @@ export default function FormInput<T extends FieldValues>({
     control,
     placeholder,
     type = "text",
+    disabled,
 }: Props<T>) {
     return (
         <Controller
@@ -33,11 +35,18 @@ export default function FormInput<T extends FieldValues>({
                     }
                     help={fieldState.error?.message}
                 >
-                    <Input
-                        {...field}
-                        type={type}
-                        placeholder={placeholder}
-                    />
+                    <div className="relative">
+                        {placeholder && (
+                            <span className="absolute right-3 top-2 z-10 bg-white px-1 text-xs text-gray-500">
+                                {placeholder}
+                            </span>
+                        )}
+                        <Input
+                            {...field}
+                            type={type}
+                            disabled={disabled}
+                        />
+                    </div>
                 </Form.Item>
             )}
         />

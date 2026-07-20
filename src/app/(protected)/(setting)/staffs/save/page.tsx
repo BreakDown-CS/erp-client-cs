@@ -3,47 +3,49 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Divider, Drawer, Form, Space } from "antd";
 import { useForm } from "react-hook-form";
-import { SaveStaffForm, SaveStaffSchema } from "@/modules/staffs/staff.schema";
-import { PayloadSaveStaff } from "@/modules/staffs/staff.type";
+import { SaveStaffForm, SaveStaffSchema } from "@/modules/employees/emp.schema";
+import { PayloadSaveStaff } from "@/modules/employees/emp.type";
 import { toast } from "sonner";
 import Title from "antd/es/typography/Title";
 import FormInput from "@/components/ui/FormInput";
 import FormSelect from "@/components/ui/FormSelect";
 import FormDatePicker from "@/components/ui/FormDatePicker";
 import FormTextArea from "@/components/ui/FormTextArea";
-import { bankOptions, branchOptions, departmentOptions, statusOptions, workTypeOptions } from "@/modules/staffs/staff.constants";
 import AppButton from "@/components/ui/AppButton";
 import { ArrowLeft, ListRestart, Save } from "lucide-react";
+import { FormSetupForSaveEmployees } from "@/modules/setup/setup.type";
+import { Gender } from "@/modules/employees/emp.constants";
+import { InsertStaffNew } from "@/modules/employees/emp.service";
 
 interface Props {
     opneDrawerStaff: boolean;
+    setupOption: FormSetupForSaveEmployees
     setOpenDrawerNewStaff: (open: boolean) => void;
     staffId: number;
 }
 
-export default function SaveStaffPage({ staffId, opneDrawerStaff, setOpenDrawerNewStaff }: Props) {
+export default function SaveStaffPage({ staffId, opneDrawerStaff, setOpenDrawerNewStaff, setupOption }: Props) {
     const { control, handleSubmit, reset, } = useForm<SaveStaffForm>({
         resolver: zodResolver(SaveStaffSchema),
         defaultValues: {
-            username: "",
-            em_code: "",
-            status: "",
-            branches_id: 0,
-            password: "",
-            password_confirm: "",
-            start_work: "",
-            end_work: "",
-            card_id: "",
-            work_type: "",
-            department_id: 0,
-            full_name: "",
-            nickname: "",
-            tel: "",
-            email: "",
-            birthday: "",
-            bank_no: "",
-            bank_id: 0,
-            address: "",
+            em_code: '',
+            first_name_th: '',
+            last_name_th: '',
+            first_name_en: '',
+            last_name_en: '',
+            nickname: '',
+            gender: '',
+            birthday: '',
+            email: '',
+            phone: '',
+            branch_id: '',
+            department_id: '',
+            position_id: '',
+            status_id: '',
+            username: '',
+            password: '',
+            password_confirm: '',
+            remark: '',
         },
     });
 
@@ -53,7 +55,9 @@ export default function SaveStaffPage({ staffId, opneDrawerStaff, setOpenDrawerN
                 ...values,
             };
 
-            console.log(payload);
+            const resposer = await InsertStaffNew(payload)
+
+            console.log(resposer)
 
             toast.success("บันทึกข้อมูลสำเร็จ");
         } catch (error) {
@@ -108,6 +112,7 @@ export default function SaveStaffPage({ staffId, opneDrawerStaff, setOpenDrawerN
                         name="username"
                         control={control}
                         placeholder="ชื่อผู้ใช้งาน"
+                        disabled
                     />
 
                     {/* EM CODE */}
@@ -115,22 +120,39 @@ export default function SaveStaffPage({ staffId, opneDrawerStaff, setOpenDrawerN
                         name="em_code"
                         control={control}
                         placeholder="EM CODE"
+                        disabled
                     />
 
                     {/* STATUS */}
                     <FormSelect<SaveStaffForm>
-                        name="status"
+                        name="status_id"
                         control={control}
                         placeholder="เลือกสถานะ"
-                        options={statusOptions}
+                        options={setupOption.employees_status}
+                    />
+
+                    {/* POSITION */}
+                    <FormSelect<SaveStaffForm>
+                        name="position_id"
+                        control={control}
+                        placeholder="เลือกตำแหน่ง"
+                        options={setupOption.positions}
                     />
 
                     {/* BRANCH */}
                     <FormSelect<SaveStaffForm>
-                        name="branches_id"
+                        name="branch_id"
                         control={control}
                         placeholder="เลือกสาขา"
-                        options={branchOptions}
+                        options={setupOption.branches}
+                    />
+
+                    {/* DEPARTMENT */}
+                    <FormSelect<SaveStaffForm>
+                        name="department_id"
+                        control={control}
+                        placeholder="เลือกแผนก"
+                        options={setupOption.employees_department}
                     />
 
                     {/* PASSWORD */}
@@ -148,48 +170,40 @@ export default function SaveStaffPage({ staffId, opneDrawerStaff, setOpenDrawerN
                         placeholder="ยืนยันรหัสผ่าน"
                     />
 
-                    {/* START WORK */}
-                    <FormDatePicker<SaveStaffForm>
-                        name="start_work"
-                        control={control}
-                        placeholder="วันเริ่มงาน"
-                    />
-
-                    {/* END WORK */}
-                    <FormDatePicker<SaveStaffForm>
-                        name="end_work"
-                        control={control}
-                        placeholder="วันสิ้นสุดงาน"
-                    />
-
-                    {/* CARD ID */}
-                    <FormInput<SaveStaffForm>
-                        name="card_id"
-                        control={control}
-                        placeholder="เลขบัครประชาชน"
-                    />
-
-                    {/* WORK TYPE */}
+                    {/* GENDER */}
                     <FormSelect<SaveStaffForm>
-                        name="work_type"
+                        name="gender"
                         control={control}
-                        placeholder="ประเภทงาน"
-                        options={workTypeOptions}
+                        placeholder="เพศ"
+                        options={Gender}
                     />
 
-                    {/* DEPARTMENT */}
-                    <FormSelect<SaveStaffForm>
-                        name="department_id"
-                        control={control}
-                        placeholder="เลือกแผนก"
-                        options={departmentOptions}
-                    />
-
-                    {/* FULL NAME */}
+                    {/*  FIRST NAME THAI */}
                     <FormInput<SaveStaffForm>
-                        name="full_name"
+                        name="first_name_th"
                         control={control}
                         placeholder="ชื่อเต็ม"
+                    />
+
+                    {/* LAST NAME THAI */}
+                    <FormInput<SaveStaffForm>
+                        name="last_name_th"
+                        control={control}
+                        placeholder="นามสกุล"
+                    />
+
+                    {/*  FIRST NAME EN */}
+                    <FormInput<SaveStaffForm>
+                        name="first_name_en"
+                        control={control}
+                        placeholder="First Name"
+                    />
+
+                    {/* LAST NAME EN */}
+                    <FormInput<SaveStaffForm>
+                        name="last_name_en"
+                        control={control}
+                        placeholder="Last Name"
                     />
 
                     {/* NICK NAME */}
@@ -199,9 +213,9 @@ export default function SaveStaffPage({ staffId, opneDrawerStaff, setOpenDrawerN
                         placeholder="ชือเล่น"
                     />
 
-                    {/* TEL */}
+                    {/* PHONE */}
                     <FormInput<SaveStaffForm>
-                        name="tel"
+                        name="phone"
                         control={control}
                         placeholder="เบอร์โทรศัพท์"
                     />
@@ -226,30 +240,15 @@ export default function SaveStaffPage({ staffId, opneDrawerStaff, setOpenDrawerN
                         control={control}
                         placeholder="วันเกิด"
                     />
-
-                    {/* BANK_NO */}
-                    <FormInput<SaveStaffForm>
-                        name="bank_no"
-                        control={control}
-                        placeholder="เลขบัญชี"
-                    />
-
-                    {/* BANK_ID */}
-                    <FormSelect<SaveStaffForm>
-                        name="bank_id"
-                        control={control}
-                        placeholder="ชื่อธนาคาร"
-                        options={bankOptions}
-                    />
                 </div>
 
                 <div className="grid grid-cols-1 gap-3 mt-3">
 
-                    {/* ADDRESS */}
+                    {/* remark */}
                     <FormTextArea<SaveStaffForm>
-                        name="address"
+                        name="remark"
                         control={control}
-                        placeholder="รายละเอียดที่อยู่"
+                        placeholder="รายละเอียด"
                         rows={4}
                         maxLength={250}
                     />

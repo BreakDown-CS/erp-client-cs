@@ -39,12 +39,18 @@ export default function FormTextArea<
                     }
                     help={fieldState.error?.message}
                 >
-                    <TextArea
-                        {...field}
-                        rows={rows}
-                        placeholder={placeholder}
-                        maxLength={maxLength}
-                    />
+                    <div className="relative">
+                        {placeholder && (
+                            <span className="absolute right-3 top-2 z-10 bg-white px-1 text-xs text-gray-500">
+                                {placeholder}
+                            </span>
+                        )}
+                        <TextArea
+                            {...field}
+                            rows={rows}
+                            maxLength={maxLength}
+                        />
+                    </div>
                 </Form.Item>
             )}
         />

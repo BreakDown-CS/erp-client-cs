@@ -10,7 +10,7 @@ import {
 
 interface Option {
     label: string;
-    value: string | number;
+    value: string | number | boolean;
 }
 
 interface Props<T extends FieldValues> {
@@ -38,12 +38,21 @@ export default function FormSelect<T extends FieldValues>({
                     }
                     help={fieldState.error?.message}
                 >
-                    <Select
-                        // value={field.value}
-                        placeholder={placeholder}
-                        options={options}
-                        onChange={field.onChange}
-                    />
+                    <div className="relative">
+                        {placeholder && (
+                            <span className="absolute right-3 top-2 z-10 bg-white px-1 text-xs text-gray-500">
+                                {placeholder}
+                            </span>
+                        )}
+
+                        <Select
+                            value={field.value ?? undefined}
+                            onChange={field.onChange}
+                            options={options}
+                            placeholder={placeholder}
+                            style={{ width: "100%" }}
+                        />
+                    </div>
                 </Form.Item>
             )}
         />

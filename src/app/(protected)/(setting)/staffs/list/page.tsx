@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Form, Space, Table } from "antd";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,24 +11,26 @@ import FormInput from "@/components/ui/FormInput";
 import FormSelect from "@/components/ui/FormSelect";
 
 import {
-    branchOptions,
-    departmentOptions,
-    statusOptions,
-} from "@/modules/staffs/staff.constants";
-
-import {
     ListStaffForm,
     ListStaffSchema,
-} from "@/modules/staffs/staff.schema";
+} from "@/modules/employees/emp.schema";
 
-import { StaffList } from "@/modules/staffs/staff.type";
+import { StaffList } from "@/modules/employees/emp.type";
 
 import { StaffListColumns } from "./columns_staff_list";
 import SaveStaffPage from "../save/page";
+import { GetBranchesList, GetDepartmentList, GetEmployeeStatusList, GetPositionsList } from "@/modules/employees/emp.service";
+import { FormSetupForSaveEmployees } from "@/modules/setup/setup.type";
 
 export default function StaffListPage() {
     const [opneDrawerNewStaff, setOpenDrawerNewStaff] = useState<boolean>(false);
-    
+    const [setUpOption, setSetUpOption] = useState<FormSetupForSaveEmployees>({
+        branches: [],
+        employees_department: [],
+        employees_status: [],
+        positions: []
+    });
+
     const { control, handleSubmit, reset } = useForm<ListStaffForm>({
         resolver: zodResolver(ListStaffSchema),
         defaultValues: {
@@ -111,6 +113,25 @@ export default function StaffListPage() {
         console.log("handleEditStaff : ", staffId)
     }
 
+    useEffect(() => {
+        const fetchData = async () => {
+            const [branchOptions, departmentOptions, statusOptions, positionsOptions] = await Promise.all([
+                GetBranchesList(),
+                GetDepartmentList(),
+                GetEmployeeStatusList(),
+                GetPositionsList(),
+            ]);
+            setSetUpOption({
+                branches: branchOptions.result,
+                employees_department: departmentOptions.result,
+                employees_status: statusOptions.result,
+                positions: positionsOptions.result
+            })
+        };
+
+        void fetchData();
+    }, []);
+
     return (
         <>
             <div className="flex items-center justify-between mb-4">
@@ -164,7 +185,7 @@ export default function StaffListPage() {
                         name="branches_id"
                         control={control}
                         placeholder="เลือกสาขา"
-                        options={branchOptions}
+                        options={setUpOption.branches}
                     />
 
                     <FormInput<ListStaffForm>
@@ -177,14 +198,14 @@ export default function StaffListPage() {
                         name="status"
                         control={control}
                         placeholder="เลือกสถานะ"
-                        options={statusOptions}
+                        options={setUpOption.employees_status}
                     />
 
                     <FormSelect<ListStaffForm>
                         name="department_id"
                         control={control}
                         placeholder="เลือกแผนก"
-                        options={departmentOptions}
+                        options={setUpOption.employees_department}
                     />
                 </div>
             </Form>
@@ -204,7 +225,7 @@ export default function StaffListPage() {
                 size="small"
             />
 
-            <SaveStaffPage staffId={0} opneDrawerStaff={opneDrawerNewStaff} setOpenDrawerNewStaff={setOpenDrawerNewStaff}/>        
+            <SaveStaffPage staffId={0} setupOption={setUpOption} opneDrawerStaff={opneDrawerNewStaff} setOpenDrawerNewStaff={setOpenDrawerNewStaff} />
         </>
     );
 }

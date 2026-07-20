@@ -34,27 +34,33 @@ export default function FormDatePicker<
                     }
                     help={fieldState.error?.message}
                 >
-                    <DatePicker
-                        style={{ width: "100%" }}
-                        format="DD/MM/YYYY"
-                        placeholder={placeholder}
-                        value={
-                            field.value
-                                ? dayjs(
-                                    field.value as string
-                                )
-                                : null
-                        }
-                        onChange={(date) =>
-                            field.onChange(
-                                date
-                                    ? date.format(
-                                        "YYYY-MM-DD"
+                    <div className="relative">
+                        {placeholder && (
+                            <span className="absolute right-3 top-2 z-10 bg-white px-1 text-xs text-gray-500">
+                                {placeholder}
+                            </span>
+                        )}
+                        <DatePicker
+                            style={{ width: "100%" }}
+                            format="DD/MM/YYYY"
+                            value={
+                                field.value
+                                    ? dayjs(
+                                        field.value as string
                                     )
-                                    : ""
-                            )
-                        }
-                    />
+                                    : null
+                            }
+                            onChange={(date) =>
+                                field.onChange(
+                                    date
+                                        ? date.format(
+                                            "YYYY-MM-DD"
+                                        )
+                                        : ""
+                                )
+                            }
+                        />
+                    </div>
                 </Form.Item>
             )}
         />

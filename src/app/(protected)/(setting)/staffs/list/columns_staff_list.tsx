@@ -1,4 +1,4 @@
-import { StaffList } from "@/modules/staffs/staff.type";
+import { StaffList } from "@/modules/employees/emp.type";
 import { EditOutlined } from "@ant-design/icons";
 import { Button, TableColumnsType, Tooltip } from "antd";
 

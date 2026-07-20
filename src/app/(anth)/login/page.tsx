@@ -38,37 +38,37 @@ export default function LoginPage() {
     });
 
     // SUBMIT
-    const onSubmit = async (values: LoginForm) => {
+    const onSubmit = async (_values: LoginForm) => {
         try {
             setLoading(true);
-            const payloadLogin: PayloadLogin = {
-                username: values.username,
-                password: values.password,
-            };
+            // const payloadLogin: PayloadLogin = {
+            //     username: values.username,
+            //     password: values.password,
+            // };
 
-            const response = await AuthLogin(payloadLogin);
+            // const response = await AuthLogin(payloadLogin);
 
-            switch (response.code) {
-                case 200:
-                    if (response.message === "user not found") {
-                        return toast.warning("ไม่พบผู้ใช้งาน");
-                    }
+            // switch (response.code) {
+            //     case 200:
+            // if (response.message === "user not found") {
+            //     return toast.warning("ไม่พบผู้ใช้งาน");
+            // }
 
-                    const { access_token, user } = response.result
+            // const { access_token, user } = response.result
 
-                    // เก็บ token
-                    localStorage.setItem("access_token", access_token);
+            // // เก็บ token
+            // localStorage.setItem("access_token", access_token);
 
-                    // เก็บ user
-                    localStorage.setItem("user", JSON.stringify(user));
+            // // เก็บ user
+            // localStorage.setItem("user", JSON.stringify(user));
 
-                    toast.success("Login Success");
-                    router.push("/dashboard")
-                    break
-                default:
-                    toast.error("Login Failed");
-                    break;
-            }
+            toast.success("Login Success");
+            router.push("/dashboard")
+            //     break
+            // default:
+            //     toast.error("Login Failed");
+            //     break;
+            // }
 
         } catch (error) {
             toast.error("Login Failed");
