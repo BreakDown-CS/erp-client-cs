@@ -3,11 +3,11 @@ import { PayloadListStaff, PayloadSaveStaff } from "./emp.type";
 
 export const GetStaffList = async (data: PayloadListStaff) => {
     try {
-        const response = await api.post("/setting/staffs/list", data);
+        const response = await api.post("/employee/list", data);
 
         return response.data
     } catch (error) {
-        console.log("AuthLogin Error :", error);
+        console.log("GetStaffList Error :", error);
         throw error;
     }
 };
@@ -58,7 +58,7 @@ export const GetPositionsList = async () => {
 
 export const InsertStaffNew = async (payload: PayloadSaveStaff) => {
     try {
-        const response = await api.post("/employees/save", payload)
+        const response = await api.post("/employee/save", payload)
 
         return response.data
     } catch (error) {
@@ -66,3 +66,14 @@ export const InsertStaffNew = async (payload: PayloadSaveStaff) => {
         throw error;
     }
 }
+
+export const GetStaffDetailForEdit = async (user_uuid: string) => {
+    try {
+        const response = await api.get(`/employee/get-staff-detail/${user_uuid}`);
+
+        return response.data;
+    } catch (error) {
+        console.log("GetStaffDetailForEdit Error:", error);
+        throw error;
+    }
+};

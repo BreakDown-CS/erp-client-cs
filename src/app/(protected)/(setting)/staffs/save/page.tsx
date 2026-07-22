@@ -15,17 +15,18 @@ import AppButton from "@/components/ui/AppButton";
 import { ArrowLeft, ListRestart, Save } from "lucide-react";
 import { FormSetupForSaveEmployees } from "@/modules/setup/setup.type";
 import { Gender } from "@/modules/employees/emp.constants";
-import { InsertStaffNew } from "@/modules/employees/emp.service";
+import { GetStaffDetailForEdit, InsertStaffNew } from "@/modules/employees/emp.service";
+import { useEffect } from "react";
 
 interface Props {
     opneDrawerStaff: boolean;
     setupOption: FormSetupForSaveEmployees
     setOpenDrawerNewStaff: (open: boolean) => void;
-    staffId: number;
+    staffId: string;
 }
 
 export default function SaveStaffPage({ staffId, opneDrawerStaff, setOpenDrawerNewStaff, setupOption }: Props) {
-    const { control, handleSubmit, reset, } = useForm<SaveStaffForm>({
+    const { control, handleSubmit, reset, getValues } = useForm<SaveStaffForm>({
         resolver: zodResolver(SaveStaffSchema),
         defaultValues: {
             em_code: '',
@@ -54,12 +55,23 @@ export default function SaveStaffPage({ staffId, opneDrawerStaff, setOpenDrawerN
             const payload: PayloadSaveStaff = {
                 ...values,
             };
-
             const resposer = await InsertStaffNew(payload)
-
-            console.log(resposer)
-
-            toast.success("บันทึกข้อมูลสำเร็จ");
+            switch (resposer.code) {
+                case 200:
+                    switch (resposer.status) {
+                        case true:
+                            toast.success("บันทึกข้อมูลสำเร็จ");
+                            reset();
+                            setOpenDrawerNewStaff(false);
+                            break;
+                        default:
+                            toast.error("บันทึกข้อมูลไม่สำเร็จ");
+                            break;
+                    }
+                default:
+                    toast.error("บันทึกข้อมูลไม่สำเร็จ");
+                    break;
+            }
         } catch (error) {
             console.error(error);
             toast.error("บันทึกข้อมูลไม่สำเร็จ");
@@ -71,9 +83,43 @@ export default function SaveStaffPage({ staffId, opneDrawerStaff, setOpenDrawerN
         setOpenDrawerNewStaff(false);
     };
 
+    useEffect(() => {
+        const fetchStaffDetail = async () => {
+            if (staffId == "") return;
+            try {
+                const response = await GetStaffDetailForEdit(staffId);
+
+                switch (response.code) {
+                    case 200:
+                        switch (response.status) {
+                            case true:
+                                toast.success("ค้นหาข้อมูลสำเร็จ");
+                                reset({
+                                    ...getValues(),
+                                    ...response.result
+                                });
+                                break;
+                            default:
+                                toast.error("ไม่พบข้อมูล");
+                                break;
+                        }
+                        break;
+                    default:
+                        toast.error("เกิดข้อผิดพลาดในการค้นหาข้อมูลพนักงาน");
+                        break;
+                }
+            } catch (err) {
+                toast.error("เกิดข้อผิดพลาดในการค้นหาข้อมูลพนักงาน");
+                console.error(err);
+            }
+        };
+
+        fetchStaffDetail();
+    }, [staffId, reset]);
+
     return (
         <Drawer
-            title={staffId > 0 ? "แก้ไขพนักงาน" : "เพิ่มพนักงาน"}
+            title={staffId != "" ? "แก้ไขพนักงาน" : "เพิ่มพนักงาน"}
             placement="right"
             size={'1000'}
             open={opneDrawerStaff}

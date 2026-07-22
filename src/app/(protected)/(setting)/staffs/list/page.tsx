@@ -1,29 +1,38 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Form, Space, Table } from "antd";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ListRestart, Search, UserRoundPlus } from "lucide-react";
-
 import AppButton from "@/components/ui/AppButton";
 import FormInput from "@/components/ui/FormInput";
 import FormSelect from "@/components/ui/FormSelect";
-
 import {
     ListStaffForm,
     ListStaffSchema,
 } from "@/modules/employees/emp.schema";
-
-import { StaffList } from "@/modules/employees/emp.type";
-
+import { PayloadListStaff, StaffList } from "@/modules/employees/emp.type";
 import { StaffListColumns } from "./columns_staff_list";
 import SaveStaffPage from "../save/page";
-import { GetBranchesList, GetDepartmentList, GetEmployeeStatusList, GetPositionsList } from "@/modules/employees/emp.service";
+import { GetBranchesList, GetDepartmentList, GetEmployeeStatusList, GetPositionsList, GetStaffList } from "@/modules/employees/emp.service";
 import { FormSetupForSaveEmployees } from "@/modules/setup/setup.type";
 
 export default function StaffListPage() {
     const [opneDrawerNewStaff, setOpenDrawerNewStaff] = useState<boolean>(false);
+    const [staffEditId, setStaffEditId] = useState<string>("")
+    const [staffList, setStaffList] = useState<StaffList[]>([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(50);
+    const [total, setTotal] = useState(0);
+    const [searchForm, setSearchForm] = useState<ListStaffForm>({
+        username: "",
+        employee_code: "",
+        branches_id: "",
+        full_name: "",
+        status_id: "",
+        department_id: "",
+    });
     const [setUpOption, setSetUpOption] = useState<FormSetupForSaveEmployees>({
         branches: [],
         employees_department: [],
@@ -35,82 +44,52 @@ export default function StaffListPage() {
         resolver: zodResolver(ListStaffSchema),
         defaultValues: {
             username: "",
-            em_code: "",
+            employee_code: "",
             branches_id: "",
             full_name: "",
-            status: "",
+            status_id: "",
             department_id: "",
         },
     });
 
-    /**
-     * Mock Data
-     */
-    const mockData = useMemo<StaffList[]>(
-        () =>
-            Array.from({ length: 100 }, (_, index) => ({
-                id: String(index + 1),
-                employee_code: `EMP${String(index + 1).padStart(4, "0")}`,
-                first_name: `FirstName${index + 1}`,
-                last_name: `LastName${index + 1}`,
-                username: `user${index + 1}`,
-                branch_name: ["Bangkok", "Chiang Mai", "Khon Kaen", "Phuket"][
-                    index % 4
-                ],
-                department_name: ["IT", "HR", "Finance", "Sales"][index % 4],
-                position_name: [
-                    "Developer",
-                    "Manager",
-                    "Officer",
-                    "Supervisor",
-                ][index % 4],
-                status: index % 2 === 0 ? "ACTIVE" : "INACTIVE",
-            })),
-        []
-    );
-
-    const [staffList, setStaffList] = useState<StaffList[]>(mockData);
-
-    /**
-     * Search
-     */
-    const onSubmit = (form: ListStaffForm) => {
-        const result = mockData.filter((item) => {
-            const fullName = `${item.first_name} ${item.last_name}`.toLowerCase();
-
-            return (
-                (!form.username ||
-                    item.username
-                        .toLowerCase()
-                        .includes(form.username.toLowerCase())) &&
-                (!form.em_code ||
-                    item.employee_code
-                        .toLowerCase()
-                        .includes(form.em_code.toLowerCase())) &&
-                (!form.full_name ||
-                    fullName.includes(form.full_name.toLowerCase())) &&
-                (!form.branches_id ||
-                    item.branch_name === form.branches_id) &&
-                (!form.department_id ||
-                    item.department_name === form.department_id) &&
-                (!form.status ||
-                    item.status === form.status)
-            );
-        });
-
-        setStaffList(result);
+    const onSubmit = async (form: ListStaffForm) => {
+        setSearchForm(form);
+        loadStaff(currentPage, pageSize, form);
     };
 
-    /**
-     * Reset Form
-     */
+    const loadStaff = async (page = currentPage, limit = pageSize, form = searchForm) => {
+        const payload: PayloadListStaff = {
+            username: form.username,
+            employee_code: form.employee_code,
+            branch_id: form.branches_id || null,
+            department_id: form.department_id || null,
+            status_id: form.status_id || null,
+            full_name: form.full_name,
+            page,
+            limit,
+        };
+
+        const result = await GetStaffList(payload);
+
+        switch (result.code) {
+            case 200:
+                setStaffList(result.result);
+                setTotal(result.meta.total);
+                setCurrentPage(result.meta.page);
+                setPageSize(result.meta.limit);
+                break;
+            default:
+                break;
+        }
+    };
+
     const handleReset = () => {
         reset();
-        setStaffList(mockData);
     };
 
     const handleEditStaff = (staffId: string) => {
-        console.log("handleEditStaff : ", staffId)
+        setStaffEditId(staffId)
+        setOpenDrawerNewStaff(true)
     }
 
     useEffect(() => {
@@ -176,7 +155,7 @@ export default function StaffListPage() {
                     />
 
                     <FormInput<ListStaffForm>
-                        name="em_code"
+                        name="employee_code"
                         control={control}
                         placeholder="EM CODE"
                     />
@@ -195,7 +174,7 @@ export default function StaffListPage() {
                     />
 
                     <FormSelect<ListStaffForm>
-                        name="status"
+                        name="status_id"
                         control={control}
                         placeholder="เลือกสถานะ"
                         options={setUpOption.employees_status}
@@ -211,21 +190,25 @@ export default function StaffListPage() {
             </Form>
 
             <Table<StaffList>
-                rowKey="id"
+                rowKey="employee_id"
                 className="mt-4"
                 columns={StaffListColumns(handleEditStaff)}
                 dataSource={staffList}
                 pagination={{
-                    pageSize: 25,
+                    current: currentPage,
+                    pageSize,
+                    total,
                     showSizeChanger: true,
                     pageSizeOptions: [10, 25, 50, 100],
-                    showTotal: (total) => `ทั้งหมด ${total} รายการ`,
+                    onChange: (page, size) => {
+                        loadStaff(page, size);
+                    },
                 }}
                 scroll={{ y: 550 }}
                 size="small"
             />
 
-            <SaveStaffPage staffId={0} setupOption={setUpOption} opneDrawerStaff={opneDrawerNewStaff} setOpenDrawerNewStaff={setOpenDrawerNewStaff} />
+            <SaveStaffPage staffId={staffEditId} setupOption={setUpOption} opneDrawerStaff={opneDrawerNewStaff} setOpenDrawerNewStaff={setOpenDrawerNewStaff} />
         </>
     );
 }

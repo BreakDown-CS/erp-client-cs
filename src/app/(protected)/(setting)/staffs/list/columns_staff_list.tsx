@@ -5,18 +5,15 @@ import { Button, TableColumnsType, Tooltip } from "antd";
 export const StaffListColumns = (handleEditStaff: (staffId: string) => void): TableColumnsType<StaffList> => [
     {
         title: 'ลำดับ',
-        dataIndex: 'id',
-        key: 'id',
+        dataIndex: 'index',
+        key: 'index',
         fixed: 'left',
         align: 'center',
-        render: (index: number) => {
-            console.log(index)
-            return (
-                <span style={{ textAlign: 'center', display: 'block' }}>
-                    {index}
-                </span>
-            )
-        }
+        render: (_text, _record, index) => (
+            <span style={{ textAlign: 'center', display: 'block' }}>
+                {index + 1}
+            </span>
+        )
     },
     {
         title: 'EM-CODE',
@@ -29,11 +26,20 @@ export const StaffListColumns = (handleEditStaff: (staffId: string) => void): Ta
     },
     {
         title: 'ชื่อพนักงาน',
-        dataIndex: 'first_name',
+        dataIndex: 'full_name',
         key: 'id',
         align: 'center',
         render: (_text: string, record: StaffList) => (
-            <span style={{ whiteSpace: 'nowrap' }}>{record.first_name + ' ' + record.last_name || '-'}</span>
+            <span style={{ whiteSpace: 'nowrap' }}>{record.full_name || '-'}</span>
+        ),
+    },
+    {
+        title: 'ชื่อเล่น',
+        dataIndex: 'nick_name',
+        key: 'nick_name',
+        align: 'center',
+        render: (_text: string, record: StaffList) => (
+            <span style={{ whiteSpace: 'nowrap' }}>{record.nick_name || '-'}</span>
         ),
     },
     {
@@ -51,7 +57,11 @@ export const StaffListColumns = (handleEditStaff: (staffId: string) => void): Ta
         key: 'branch_name',
         align: 'center',
         render: (text: string) => (
-            <span style={{ whiteSpace: 'nowrap' }}>{text || '-'}</span>
+            <Tooltip title={text || '-'}>
+                <div style={{ maxWidth: 120, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', margin: '0 auto' }}>
+                    {text || '-'}
+                </div>
+            </Tooltip>
         ),
     },
     {
@@ -60,24 +70,30 @@ export const StaffListColumns = (handleEditStaff: (staffId: string) => void): Ta
         key: 'department_name',
         align: 'center',
         render: (text: string) => (
-            <span style={{ whiteSpace: 'nowrap' }}>{text || '-'}</span>
+            <Tooltip title={text || '-'}>
+                <div style={{ maxWidth: 120, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', margin: '0 auto' }}>
+                    {text || '-'}
+                </div>
+            </Tooltip>
         ),
     },
-
     {
         title: 'ตำแหน่ง',
         dataIndex: 'position_name',
         key: 'position_name',
         align: 'center',
         render: (text: string) => (
-            <span style={{ whiteSpace: 'nowrap' }}>{text || '-'}</span>
+            <Tooltip title={text || '-'}>
+                <div style={{ maxWidth: 120, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', margin: '0 auto' }}>
+                    {text || '-'}
+                </div>
+            </Tooltip>
         ),
     },
-
     {
         title: 'สถานะ',
-        dataIndex: 'status',
-        key: 'status',
+        dataIndex: 'employee_status',
+        key: 'employee_status',
         align: 'center',
         render: (text: string) => (
             <span style={{ whiteSpace: 'nowrap' }}>{text || '-'}</span>
@@ -107,9 +123,9 @@ export const StaffListColumns = (handleEditStaff: (staffId: string) => void): Ta
                             boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
                             transition: 'all 0.3s ease',
                         }}
-                        icon={<EditOutlined/>}
+                        icon={<EditOutlined />}
                         onClick={() =>
-                            handleEditStaff(record.id)
+                            handleEditStaff(record.employee_id)
                         }
                     />
                 </Tooltip>

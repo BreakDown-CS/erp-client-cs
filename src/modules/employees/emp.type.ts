@@ -4,26 +4,26 @@ export type PayloadDropDown = {
 }
 
 export type PayloadListStaff = {
-    username: string;
-    em_code: string;
-    branches_id: string;
-    full_name: string;
-    status: string;
-    department_id: string;
+    username?: string;
+    employee_code?: string;
+    branch_id?: string | null;
+    full_name?: string;
+    status_id?: string | null;
+    department_id?: string | null;
     page: number;
     limit: number;
 }
 
 export type StaffList = {
-    id: string;
+    employee_id: string;
     employee_code: string;
-    first_name: string;
-    last_name: string;
     username: string;
+    full_name: string
+    nick_name: string
     branch_name: string;
     department_name: string;
     position_name: string;
-    status: string;
+    employee_status: string;
 }
 
 export type PayloadSaveStaff = {

@@ -2,22 +2,22 @@ import { z } from "zod";
 
 export const ListStaffSchema = z.object({
     username: z
-        .string(),
+        .string().optional().or(z.literal("")),
 
-    em_code: z
-        .string(),
+    employee_code: z
+        .string().optional().or(z.literal("")),
 
     branches_id: z
-        .string(),
+        .string().uuid().optional().or(z.literal("")),
 
     full_name: z
-        .string(),
+        .string().optional().or(z.literal("")),
 
-    status: z
-        .string(),
+    status_id: z
+        .string().uuid().optional().or(z.literal("")),
 
     department_id: z
-        .string(),
+        .string().uuid().optional().or(z.literal("")),
 });
 
 export type ListStaffForm = z.infer<typeof ListStaffSchema>;
