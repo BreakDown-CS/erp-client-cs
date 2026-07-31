@@ -1,0 +1,33 @@
+name: ERP Client CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  docker:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Generate Image Tag
+        id: tag
+        run: |
+          echo "IMAGE_TAG=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+      - name: Show Image Tag
+        run: |
+          echo $IMAGE_TAG
+
+      - name: Build Docker Image
+        run: |
+          docker build \
+          -t ${{ vars.REGISTRY_HOST }}/${{ vars.IMAGE_NAME }}:$IMAGE_TAG .
+
+      - name: Push Docker Image
+        run: |
+          docker push \
+          ${{ vars.REGISTRY_HOST }}/${{ vars.IMAGE_NAME }}:$IMAGE_TAG
