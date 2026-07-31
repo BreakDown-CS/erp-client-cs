@@ -2,7 +2,6 @@
 # 1. Install dependencies
 # -------------------------
 FROM node:20-alpine AS deps
-# แนะนำให้เพิ่ม libc6-compat สำหรับพวกไลบรารีบางตัวที่ต้องใช้บน Alpine (เช่น sharp)
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
@@ -18,7 +17,6 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# 👇 เพิ่ม 2 บรรทัดนี้
 ARG NEXT_PUBLIC_API_SETTING_URL
 ENV NEXT_PUBLIC_API_SETTING_URL=$NEXT_PUBLIC_API_SETTING_URL
 

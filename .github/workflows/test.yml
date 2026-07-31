@@ -1,0 +1,29 @@
+name: Test Self Hosted Runner
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v4
+
+      - name: Show Current Directory
+        run: pwd
+
+      - name: Show Files
+        run: ls -la
+
+      - name: Check Node
+        run: node -v
+
+      - name: Check NPM
+        run: npm -v
+
+      - name: Check Docker
+        run: docker --version
